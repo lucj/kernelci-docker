@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export TAG=1.0
 STACK_NAME="kernelci"
 
 ## Prerequisites
