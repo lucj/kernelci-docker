@@ -18,6 +18,9 @@ fi
 # disable cache
 sed -i "s,^CACHE_TYPE.*,CACHE_TYPE = 'null'," frontend/flask_settings
 
+## build the images first
+docker-compose build --build-arg HTTP_PROXY="${http_proxy}" || exit $?
+
 ## Deploy the application
 
 echo "-> deploying the application..."
