@@ -111,7 +111,7 @@ Once finished, the code of kernelci frontend and backend are available in `front
 
 You can start doing changes locally, apply patches, or add your own git remote to fetch your changes.
 
-### Run Docker-compose
+### Run the Docker Compose application
 
 You can run the application (backend & frontend) with Docker Compose. Behind the hood, it will use the docker-compose.yml file which defines some additional options to mount the frontend's and backend's source code so changes done in your local IDE will be taken into account directly in the running application (through nodemon).
 
@@ -137,11 +137,15 @@ If you want to share your work. You can either share your git repo or push the c
 
 ---
 
+### Stop the Docker Compose application
+
 The application can then be stopped
 
 ```
 $ ./dev-stop.sh
 ```
+
+### Database backup & restore
 
 #### Backup a mongo database
 
@@ -163,6 +167,8 @@ To restore an existing mongo database dump (in .tar.gz format), run the followin
 ```
 /!\ This command needs to be run after `start.sh` once all the services are up and running.
 
+### Logs backup & restore
+
 #### Backup the logs
 
 To do a backup of the boot/test logs on the previous KernelCI instance do:
@@ -181,7 +187,7 @@ To restore the logs from a backup (in .tar.gz format), run the following command
 ```
 /!\ This command needs to be run after `start.sh` once all the services are up and running.
 
-#### Backup database and log files of th current application
+### Helper for database and logs backup
 
 The _dump.sh_ script is used to do the backup of the database and of the generated logs at the same time. Those backups are saved in /tmp by default or in the folder specified with the *-d* flag. The following command create the backups in _/tmp/dump/kci_ folder:
 
@@ -254,9 +260,4 @@ Among the ongoing changes:
 - [ ] Check storage part
 - [x] Add api documentation
 - [x] Add elasticsearch and modify backend so log files are sent to ES
-- [x] Configure reverse proxy (routing with subdomains, TLS termination, ...)
 - [ ] Add front and back networks to isolate the services
-- [x] Add stack file to deploy the application on a Swarm
-- [ ] Usage of env variable or Docker secret to provide the backend token
-- [ ] Handle tagging of the application and of its components
-- [ ] Add memory constraints

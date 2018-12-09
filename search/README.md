@@ -33,7 +33,9 @@ docker-compose up -d
 
 The stack is expecting log file in the _search/log_ folder (specified by _$PWD/log_ in the docker-compose.yml file)
 
-Note: the stack might take a couple of seconds before it's up and running
+Notes:
+- the stack might take a couple of seconds before it's up and running
+- the fluentd Docker image is automatically built when running the app, it needs the **elasticsearch** plugin which is not in the default **fluent/fluentd** image.
 
 ## Files ingestion
 
