@@ -16,6 +16,8 @@ It uses Docker Compose file to decribe the services of the whole application:
 
 ## Run the application
 
+You can use kernelci-docker to run local / development versions of KernelCI. This allows you to do changes within the code and get the result instantly in the running docker instances. The source code of kernelci frontend and backend is included in this repo as submodules.
+
 ### Setup a Docker host
 
 This can be the local machine, a VM or physical machine with the Docker platform installed.
@@ -88,24 +90,6 @@ All available options for this driver: [https://docs.docker.com/machine/drivers/
 
 * Docker Machine also allows to manage an existing server with the [Generic driver](https://docs.docker.com/machine/drivers/generic/)
 
-### Activate swarm mode
-
-> Make sure your local Docker client is setup to communicate with the Docker daemon you want to deploy the application on. In case you used Docker Machine to setup the host, you will need to use the command ```eval $(docker-machine env kernelci)```, this will set some environment variables so the client can send Docker related commands to the host created above.
-
-The Docker daemon running the application needs to be in swarm mode, this can easily be configure with the following command:
-
-```
-$ docker swarm init
-```
-
-In case several IP addresses are found, an additional *--advertise-addr* option needs to be specified indicating the IP to use:
-
-```
-$ docker swarm init --advertise-addr IP
-```
-
-> A Docker daemon running in swarm mode is requested in order to use some of the latest feature and primitive such as *Config*, *Secret*, ...
-
 ### Clone the repository
 
 Once you have a Linux box up and running, get the repository
@@ -115,28 +99,49 @@ $ git clone https://github.com/lucj/kernelci-docker
 $ cd kernelci-docker
 ```
 
-### Run the application
+### Initialize the submodules
 
-The startup of the application is done in several steps:
-
-* generation of a UUID
-* setup of this UUID in the database
-* creation of a config for the frontend using this UUID
-* deploy the application *stack*
-
-All those steps are handled by the *start.sh* script, so the only things you need to do is running
-
+To get the code locally run the following commands:
 ```
-./start.sh
+git submodule init
+git submodule update
 ```
 
-The web ui is then available on port 8080 and the api on port 8081.
+Once finished, the code of kernelci frontend and backend are available in `frontend/kernelci-frontend` and `backend/kernelci-backend` respectively.
 
-![Home](./images/kernelci-home.png)
+You can start doing changes locally, apply patches, or add your own git remote to fetch your changes.
 
-### Backup / restore KernelCI from Ansible
+### Run Docker-compose
 
-You may have an already running version of kernelCI with data that you would like to keep.
+You can run the application (backend & frontend) with Docker Compose. Behind the hood, it will use the docker-compose.yml file which defines some additional options to mount the frontend's and backend's source code so changes done in your local IDE will be taken into account directly in the running application (through nodemon).
+
+Some wrapper scripts were developed to perform the actions needed:
+
+Start the application with the following command:
+
+```
+$ ./dev-start.sh
+```
+
+Once the application is running, the frontend and backend source code can be modified directly from your favorite IDE. Each changes will be taken into account automatically within the running containers and the main process will be reloaded.
+
+You can build new images with the following command:
+
+```
+$ docker-compose build SERVICE_NAME
+```
+
+### Sharing your images
+
+If you want to share your work. You can either share your git repo or push the created docker images to a repository. It can then be fetched by others.
+
+---
+
+The application can then be stopped
+
+```
+$ ./dev-stop.sh
+```
 
 #### Backup a mongo database
 
@@ -232,66 +237,6 @@ $ ls -lrt /tmp/dump/kci
 total 464
 -rw-r--r--  1 luc  wheel    5850 Jan 26 23:03 kernelci-20180126T220403.gz
 -rw-r--r--  1 luc  wheel  107873 Jan 26 23:04 kernelci-logs-20180126T220403.tar.gz
-```
-
-### Stop the application
-
-In order to stop the application and remove all the components, run the following command:
-
-```
-./stop.sh
-```
-
-In the current version, the database is persisted on a volume defined on the Docker host.
-
----
-
-## Using Docker for development
-
-You can use kernelci-docker to run local / development versions of KernelCI. This allows you to do changes within the code and get the result instantly in the running docker instances. The source code of kernelci frontend and backend is included in this repo as submodules.
-
-### Initialize the submodules
-
-To get the code locally run the following commands:
-```
-git submodule init
-git submodule update
-```
-
-Once finished, the code of kernelci frontend and backend are available in `frontend/kernelci-frontend` and `backend/kernelci-backend` respectively.
-
-You can start doing changes locally, apply patches, or add your own git remote to fetch your changes.
-
-### Run Docker-compose
-
-You can run the application (backend & frontend) with Docker Compose. Behind the hood, it will use the docker-compose.yml file which defines some additional options to mount the frontend's and backend's source code so changes done in your local IDE will be taken into account directly in the running application (through nodemon).
-
-Some wrapper scripts were developed to perform the actions needed:
-
-Start the application with the following command:
-
-```
-$ ./dev-start.sh
-```
-
-Once the application is running, the frontend and backend source code can be modified directly from your favorite IDE. Each changes will be taken into account automatically within the running containers and the main process will be reloaded.
-
-You can build new images with the following command:
-
-```
-$ docker-compose build SERVICE_NAME
-```
-
-### Sharing your images
-
-If you want to share your work. You can either share your git repo or push the created docker images to a repository. It can then be fetched by others.
-
----
-
-The application can then be stopped
-
-```
-$ ./dev-stop.sh
 ```
 
 ## Status

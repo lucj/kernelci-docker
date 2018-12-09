@@ -1,4 +1,4 @@
-In order to simplify the search in log files, an Elastic stack (previously known as ELK stack) could be used.
+In order to simplify the search in log files, an EFK stack (Elasticsearch, Fluentd, Kibana) can be used.
 Log files are indexed in Elasticsearch, as soon as they are created on the filesystem, and filtered through Kibana great interface. 
 
 *** WIP ***
@@ -7,7 +7,7 @@ Log files are indexed in Elasticsearch, as soon as they are created on the files
 
 The search application is defined in the `docker-compose.yml` file. It basically defines the 3 services of the stack:
 
-- logstash: specifies the log files to take into account (different paths for boot and build logs). It also filters and add additional attributes to each line of a log file.
+- fluentd: specifies the log files to take into account (different paths for boot and build logs)
 
 - elasticsearch: index each line of the logs it receives 
 
@@ -15,7 +15,7 @@ The search application is defined in the `docker-compose.yml` file. It basically
 
 ## How it works
 
-In this first version logstash is configured to check the new log files written to disk and parses them accordingly.
+In this first version fluentd is configured to check the new log files written to disk and parses them accordingly.
 
 All the files with *.log* extension located in the *$PWD/log* folder are taken into account.
 
@@ -25,7 +25,7 @@ Kibana can then be used to search the logs in a very clean way. It's a very conf
 
 ## Running the stack
 
-The following command needs to be run from the _search_ folder in order to launch the Elastic stack, that's it.
+The following command needs to be run from the _search_ folder in order to launch the stack, that's it.
 
 ```
 docker-compose up -d
@@ -76,7 +76,7 @@ INFO:=> log file /out/raw-sample-2.json-20171210T205524.log generated
 ...
 ```
 
-For each raw file, a new file has been created and is ready to be used by the Elastic stack. If the output folder of the parser is the same as the input folder specified for the Elastic stack then each file created will first be ingested by logstash and indexed in elasticsearch. Each record will look like the following.
+For each raw file, a new file has been created and is ready to be used by the EFK stack. If the output folder of the parser is the same as the input folder specified for the EFK stack then each file created will first be ingested by fluentd and indexed in elasticsearch. Each record will look like the following.
 
 ```
 {
@@ -101,7 +101,7 @@ It's then very easy to search / filter logs through Kibana and to produce nice d
 
 The Kibana interface is available on [http://localhost:5601/](http://localhost:5601/)
 
-Note: some examples of Kibana dashboard will be added soon !
+![Kibana](./images/kibana-1.png)
 
 To index some other files, you need to copy the raw version in the _search/log_ folder and run the previous container on each of them.
 

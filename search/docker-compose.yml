@@ -1,25 +1,20 @@
 version: '3.3'
 services:
-  logstash:
-    image: logstash:5.5.2
-    depends_on:
-      - elasticsearch
+  fluentd:
+    build: ./fluentd
     restart: always
     volumes:
-      - ./logstash.conf:/config/logstash.conf
+      - ./fluent.conf:/fluentd/etc/fluent.conf
       - $PWD/log/:/kernelci/log/:ro
-    command: ["logstash", "-f", "/config/logstash.conf"]
   elasticsearch:
-    image: elasticsearch:5.5.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2 
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     restart: always
     volumes:
       - es:/usr/share/elasticsearch/data
   kibana:
-    image: kibana:5.5.2
-    depends_on:
-      - elasticsearch
+    image: docker.elastic.co/kibana/kibana:6.4.2 
     ports:
       - 5601:5601
     restart: always
