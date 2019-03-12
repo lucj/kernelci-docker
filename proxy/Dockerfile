@@ -2,6 +2,10 @@
 
 FROM mhart/alpine-node:6.11.3 as frontend
 
+# Proxy settings
+ENV http_proxy ${HTTP_PROXY}
+ENV https_proxy ${HTTP_PROXY}
+
 RUN apk update && apk add git rsync
 RUN git clone https://github.com/kernelci/kernelci-frontend.git front
 RUN node /front/app/dashboard/static/js/lib/r.js -o /front/app/dashboard/static/js/build.js
@@ -9,6 +13,11 @@ RUN node /front/app/dashboard/static/js/lib/r.js -o /front/app/dashboard/static/
 # API documentation
 
 FROM bitnami/minideb:jessie as backend
+
+# Proxy settings
+ENV http_proxy ${HTTP_PROXY}
+ENV https_proxy ${HTTP_PROXY}
+RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
 
 RUN install_packages git python python-pip python-dev build-essential
 RUN git clone https://github.com/kernelci/kernelci-backend.git /tmp/kernelci-backend
@@ -18,6 +27,10 @@ RUN cd /tmp/kernelci-backend/doc && make html
 # Proxy setup
 
 FROM nginx:1.13-alpine
+
+# Proxy settings
+ENV http_proxy ${HTTP_PROXY}
+ENV https_proxy ${HTTP_PROXY}
 
 # Remove default configuration
 RUN rm /etc/nginx/conf.d/default.conf

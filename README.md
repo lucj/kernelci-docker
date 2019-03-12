@@ -256,6 +256,8 @@ To get the code locally run the following commands:
 ```
 git submodule init
 git submodule update
+git submodule foreach git checkout master
+git submodule foreach git pull origin master
 ```
 
 Once finished, the code of kernelci frontend and backend are available in `frontend/kernelci-frontend` and `backend/kernelci-backend` respectively.

@@ -11,6 +11,8 @@ services:
     volumes:
       - kci:/usr/share/nginx/html/kernelci/logs
       - $PWD/frontend/kernelci-frontend/app/dashboard/static:/usr/share/nginx/html/kernelci/frontend/static
+    environment:
+      - no_proxy="${no_proxy},proxy,frontend,backend,celery,redis,mongo"
   frontend:
     image: lucj/kernelci-frontend:${TAG:-latest}
     build: ./frontend
@@ -19,6 +21,8 @@ services:
       - $PWD/frontend/kernelci-frontend/app:/srv/kernelci-frontend/app
       - $PWD/frontend/flask_settings:/etc/linaro/kernelci-frontend.cfg
     command: nodemon -V --watch /srv/kernelci-frontend/app -e py,html --exec "/bin/bash -c" /srv/entrypoint.sh
+    environment:
+      - no_proxy="${no_proxy},proxy,frontend,backend,celery,redis,mongo"
   backend:
     image: lucj/kernelci-backend:${TAG:-latest}
     build: ./backend/
@@ -29,6 +33,8 @@ services:
       - $PWD/backend/kernelci-backend/app:/srv/kernelci-backend/app
       - kci:/var/www/images/kernel-ci
     command: nodemon -V --watch /srv/kernelci-backend/app/server.py --exec "/bin/bash -c" /srv/entrypoint.sh
+    environment:
+      - no_proxy="${no_proxy},proxy,frontend,backend,celery,redis,mongo"
   celery:
     image: lucj/kernelci-celery:${TAG:-latest}
     build:
@@ -39,14 +45,20 @@ services:
       - $PWD/backend/kernelci-backend/app:/srv/kernelci-backend/app
       - kci:/var/www/images/kernel-ci
     command: nodemon -V --watch /srv/kernelci-backend/app -e py --ignore /srv/kernelci-backend/app/taskqueue/celeryconfig.py --exec "/bin/bash -c" /srv/entrypoint.sh
+    environment:
+      - no_proxy="${no_proxy},proxy,frontend,backend,celery,redis,mongo"
   redis:
     image: redis:3.2
     restart: on-failure
+    environment:
+      - no_proxy="${no_proxy},proxy,frontend,backend,celery,redis,mongo"
   mongo:
     image: mongo:3.4
     restart: on-failure
     volumes:
       - data:/data/db
+    environment:
+      - no_proxy="${no_proxy},proxy,frontend,backend,celery,redis,mongo"
 volumes:
   data:
   kci:

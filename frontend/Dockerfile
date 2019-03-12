@@ -1,5 +1,10 @@
 FROM bitnami/minideb:jessie
 
+# Proxy settings
+ENV http_proxy ${HTTP_PROXY}
+ENV https_proxy ${HTTP_PROXY}
+RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
+
 # Install dependencies
 
 RUN install_packages build-essential git python python-pip python-dev uwsgi-plugin-python curl redis-tools wget
